@@ -1,168 +1,44 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Nexora.Data;
 using Npgsql;
-using System;
-using System.Data;
-using System.Data.Common;
+using Konscious.Security.Cryptography;
+using Microsoft.AspNetCore.Identity;
 
-namespace Nexora.services
+namespace Nexora.Services
 {
-     
-    public class UsersServices : Controller
+    public class UsersServices
     {
+        private readonly Database _db;
+        private readonly PasswordHasher<object> _hasher = new();
 
-
-
-
-        public IResult Index()
+        public UsersServices(Database db)
         {
-            var connString =
-                "Host=127.0.0.1;Username=trix0;Password=Homepage12!;Database=angebotstool";
-
-            try
-            {
-                using var conn = new NpgsqlConnection(connString);
-                conn.Open();
-
-                string cmd = "SELECT * FROM crm.projekte";
-
-                using var result = new NpgsqlCommand(cmd, conn);
-                using var rdr = result.ExecuteReader();
-
-                var rows = new List<Dictionary<string, object>>();
-
-                while (rdr.Read())
-                {
-                    var row = new Dictionary<string, object>();
-
-                    for (int i = 0; i < rdr.FieldCount; i++)
-                    {
-                        row[rdr.GetName(i)] =
-                            rdr.IsDBNull(i) ? null : rdr.GetValue(i);
-                    }
-
-                    rows.Add(row);
-                }
-
-                return Results.Ok(rows);
-            }
-            catch (Exception ex)
-            {
-                return Results.Problem(ex.Message);
-            }
-
-
+            _db = db;
         }
 
-        // GET: UsersServices/Details/5
-        public ActionResult Details(int id)
+        public IResult Create(string mail, string password)
         {
-            var connString = "Host=127.0.0.1;Username=trix0;Password=Homepage12!;Database=angebotstool"; // -> noch ändern!
+            using var conn = _db.CreateConnection();
+            var hashPassword = _hasher.HashPassword(null, password);
 
-            var conn = new NpgsqlConnection(connString);
-            try
+            using var cmd = new NpgsqlCommand(
+                "Insert Into crm.users (email, password_hash, mandant_id, rolle) " +
+                "VALUES ( @mail, @password, '1', 'user')",
+                conn
+            );
+
+
+
+            cmd.Parameters.AddWithValue("mail", mail);
+            cmd.Parameters.AddWithValue("password", hashPassword);
+            conn.Open();
+            int i = cmd.ExecuteNonQuery();
+
+            if (i == 0)
             {
-
-                conn.Open();
-
-                string cmd = "Select * From crm.projekte WHERE ID = $1";
-                
-                var result = new NpgsqlCommand(cmd, conn);
-                result.Parameters.AddWithValue(id);
-                NpgsqlDataReader rdr = result.ExecuteReader();
-
-                var rows = new List<Dictionary<string, object>>();
-
-                while (rdr.Read())
-                {
-                    var row = new Dictionary<string, object>();
-
-                    for (int i = 0; i < rdr.FieldCount; i++)
-                    {
-                        row[rdr.GetName(i)] = rdr.IsDBNull(i) ? null : rdr.GetValue(i);
-                    }
-
-                    rows.Add(row);
-                }
-
-
-                conn.Close();
-                return Ok(rows);
+                return Results.NotFound();
             }
-            catch (Exception ex)
-            {
-                return NotFound(ex);
-            }
-            finally
-            {
-                conn.Close();
-            }
-
-            
+            return Results.Ok();
         }
 
-        // GET: UsersServices/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: UsersServices/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: UsersServices/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: UsersServices/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: UsersServices/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: UsersServices/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

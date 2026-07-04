@@ -1,39 +1,36 @@
+using Microsoft.AspNetCore.Identity;
 using Nexora.API;
+using Nexora.Data;
 using Nexora.services;
+using Nexora.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-
-// Port über Properties/launchSettings.json änderbar
 builder.Services.AddOpenApi();
+
+// DI
+builder.Services.AddScoped<Database>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<PasswordHasher<object>>();
+
+builder.Services.AddScoped<UsersServices>();
 
 var app = builder.Build();
 
 var api = app.MapGroup("/api");
 
-//____________________USER_____________________
-
-
-
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
-//______________API Endpoints____________________
+// Endpoints
 api.MapUserEndpoint();
-
 
 app.Run();
