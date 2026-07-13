@@ -1,7 +1,6 @@
-﻿using Nexora.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using Nexora.Data;
 using Npgsql;
-using Konscious.Security.Cryptography;
-using Microsoft.AspNetCore.Identity;
 
 namespace Nexora.Services
 {

@@ -1,19 +1,19 @@
 ﻿namespace Nexora.Models
 {
-    public class ansprechpartner
+    public class Ansprechpartner
     {
-        public int id { get; set; }
-        public int kunden_id { get; set; }
-        public char[] anrede { get; set; }
-        public string vorname { get; set; }
-        public string nachname { get; set; }
-        public char[] mail { get; set; }
-        public char[] telefon   { get; set; }
-        public char[] fax {  get; set; }
-        public char[] funktion { get; set; }
-        public Boolean hauptansprechpartner { get; set; }
-        public int objekt_id { get; set; }
-        public char[] mobil { get; set; }
-        public int mandant_id { get; set; }
+        public int? Id { get; set; }
+        public int? Kunden_id { get; set; }
+        public string? Anrede { get; set; }
+        public string? Vorname { get; set; }
+        public string? Nachname { get; set; }
+        public string? Mail { get; set; }
+        public string? Telefon { get; set; }
+        public string? Fax { get; set; }
+        public string? Funktion { get; set; }
+        public Boolean? Hauptansprechpartner { get; set; }
+        public int? Objekt_id { get; set; }
+        public string? Mobil { get; set; }
+        public int? Mandant_id { get; set; }
     }
 }

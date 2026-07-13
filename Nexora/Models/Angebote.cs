@@ -2,17 +2,18 @@
 {
     public class Angebote
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string angebotsnummer { get; set; }
-        public int objekt_id { get; set; }
-        public int kunden_id { get; set; }
-        public double betrag { get; set; }
-        public string status {  get; set; }
-        public int projekt_id { get; set; }
-        public string einleitung { get; set; }
-        public string schluss { get; set; }
-        public string anrede { get; set; }
-        public int mandant_id { get; set; }
+        public int? Id { get; set; }
+        public string? Title { get; set; }
+        public string? Angebotsnummer { get; set; }
+        public int? Objekt_id { get; set; }
+        public int? Kunden_id { get; set; }
+        public double? Betrag { get; set; }
+        public DateTime? Datum { get; set; }
+        public string? Status { get; set; }
+        public int? Projekt_id { get; set; }
+        public string? Einleitung { get; set; }
+        public string? Schluss { get; set; }
+        public string? Anrede { get; set; }
+        public int? Mandant_id { get; set; }
     }
 }

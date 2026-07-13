@@ -1,43 +1,54 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Nexora.Data;
+﻿using Nexora.Data;
 using Nexora.Models;
-using Npgsql;
-using System.Threading.Tasks;
+using Nexora.utils;
 
-namespace Nexora.services
+namespace Nexora.Services
 {
-    public class Projekte
+    public class ProjekteServices
     {
         private readonly Database _db;
 
+        private readonly Helpers _helpers;
+
         private readonly User kunde = new();
-        public Projekte(Database db) {
+
+        public ProjekteServices(Database db, Helpers helpers)
+        {
             _db = db;
+            _helpers = helpers;
         }
 
-        public async Task<IResult> GetAllProjekte(int mandant_id)
+        public async Task<IResult> GetAllProjekte(int mandant_id,
+            int projekt_id
+          )
         {
+
+            var kunden = new KundenRepository(_db, _helpers);
+            var angebote = new AngeboteRepository(_db, _helpers);
+            var objekte = new ObjekteRepository(_db, _helpers);
+            var rechnungen = new RechnungenRepository(_db, _helpers);
+            var projekte = new ProjekteRepository(_db, _helpers);
+            var termine = new TermineRepository(_db, _helpers);
 
             using var conn = _db.CreateConnection();
 
-
-            var kundeTask = GetKundenAsync(mandant_id);
-            var angeboteTask = GetAngeboteAsync(mandant_id);
-            var objekteTask = GetObjekteAsync(mandant_id);
-            var rechnungenTask = GetRechnungenAsync(mandant_id);
-            var projekteTask = GetProjekteAsync(mandant_id);
-            var termineTask = GetTermineAsync(mandant_id);
-            var vertraegeTask = GetVertraegeAsync(mandant_id);
+            var kundeTask = kunden.GetKundenAsync(projekt_id, mandant_id);
+            var angeboteTask = angebote.GetAngeboteProjekteAsync(projekt_id, mandant_id);
+            var objekteTask = objekte.GetObjekteAsync(mandant_id);
+            var rechnungenTask = rechnungen.GetRechnungenProjekteAsync(projekt_id, mandant_id);
+            var projekteTask = projekte.GetProjekteAsync(projekt_id, mandant_id);
+            var termineTask = termine.GetTermineAsync(mandant_id);
+            //  var vertraegeTask = GetVertraegeAsync(projekt_id, mandant_id);
 
 
             await Task.WhenAll(
                 kundeTask,
                 angeboteTask,
                 objekteTask,
-                rechnungenTask,
-                projekteTask,
-                termineTask,
-                vertraegeTask
+                 rechnungenTask,
+                 projekteTask,
+              termineTask
+            //vertraegeTask
             );
 
 
@@ -47,31 +58,21 @@ namespace Nexora.services
             var rechnungenRes = await rechnungenTask;
             var projekteRes = await projekteTask;
             var termineRes = await termineTask;
-            var vertraegeRes = await vertraegeTask;
+            //var vertraegeRes = await vertraegeTask;
 
-            return Results.Ok();
+            return Results.Json(new
+            {
+                kundeRes,
+                angeboteRes,
+                objekteRes,
+                rechnungenRes,
+                projekteRes,
+                termineRes
+            });
         }
     }
 
-    private async Task<List<User>> GetKundenAsync(int id)
-        {
-            using var conn = _db.CreateConnection();
-            using var cmd = new NpgsqlCommand("SELECT * FROM crm.kunden WHERE mandant_id = @id", conn);
-            conn.Open();
-            cmd.Parameters.AddWithValue("id", id);
-            using var reader = await cmd.ExecuteReaderAsync();
-            var kunden = new List<User>();
-            while (await reader.ReadAsync())
-            {
-                var kunde = new User
-                {
-                    ewmail = reader.GetString(0),
-                    paswsword = reader.GetString(1),
-                    // Map other properties as needed
-                };
-                kunden.Add(kunde);
-            }
-            return kunden;
-        }
-    } 
+
 }
+
+

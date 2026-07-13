@@ -1,12 +1,12 @@
 ﻿namespace Nexora.Models
 {
-    public class angebotstext
+    public class Angebotstext
     {
-        public int id { get; set; }
-        public int angebot_id { get; set; }
-        public int typ { get; set; }
-        public string text { get; set; }
-        public int mandant_id { get; set; }
+        public int? Id { get; set; }
+        public int? Angebot_id { get; set; }
+        public int? Typ { get; set; }
+        public string? Text { get; set; }
+        public int? Mandant_id { get; set; }
 
     }
 }

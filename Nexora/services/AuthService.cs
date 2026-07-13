@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
 
-namespace Nexora.services
+namespace Nexora.Services
 {
     public class AuthService
     {
@@ -19,7 +19,7 @@ namespace Nexora.services
             return result == PasswordVerificationResult.Success;
         }
 
-           
-        }
+
+    }
 
 }

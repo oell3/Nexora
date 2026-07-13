@@ -1,17 +1,17 @@
 ﻿namespace Nexora.Models
 {
-    public class mandant
+    public class Mandant
     {
-        public int Id { get; set; }
-        public string name { get; set; }
-        public char[] slug { get; set; }
-        public char[] email { get; set; }
+        public int? Id { get; set; }
+        public string? Name { get; set; }
+        public string? Slug { get; set; }
+        public string? Email { get; set; }
 
-        public char[] telefon { get; set; }
-        public char[] tarif { get; set; }
-        public char[] status { get; set; }
-        public char[] IBAN { get; set; }
+        public string? Telefon { get; set; }
+        public string? Tarif { get; set; }
+        public string? Status { get; set; }
+        public string? IBAN { get; set; }
 
-        public char[] BIC { get; set; }
+        public string? BIC { get; set; }
     }
 }

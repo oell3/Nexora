@@ -2,22 +2,22 @@
 {
     public class Kunde
     {
-        public int Id { get; set; }
-        public string typ { get; set; }
-        public string name { get; set; }
-        public string adresse { get; set; }
-        public string plz { get; set; }
-        public string stadt { get; set; }   
-        public string mail { get; set; }
-        public char[] telefon { get; set; }
-        public char[] fax { get; set; }
-        public char[] iban { get; set; }
-        public char[] bic { get; set; }
+        public int? Id { get; set; }
+        public string? Typ { get; set; }
+        public string? Name { get; set; }
+        public string? Adresse { get; set; }
+        public string? Plz { get; set; }
+        public string? Stadt { get; set; }
+        public string? Mail { get; set; }
+        public string? Telefon { get; set; }
+        public string? Fax { get; set; }
+        public string? Iban { get; set; }
+        public string? Bic { get; set; }
 
-        public char[] steueridentifikationsnummer { get; set; }
+        public string? Steueridentifikationsnummer { get; set; }
 
-        public char[] lat { get; set; }
-        public char[] lng { get; set; }
-        public int mandant_id { get; set; }
+        public string? Lat { get; set; }
+        public string? Lon { get; set; }
+        public int? Mandant_id { get; set; }
     }
 }

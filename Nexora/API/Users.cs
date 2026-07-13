@@ -1,5 +1,4 @@
-﻿using Nexora.Data;
-using Nexora.Services;
+﻿using Nexora.Services;
 
 namespace Nexora.API
 {
@@ -11,7 +10,7 @@ namespace Nexora.API
         public static void MapUserEndpoint(this RouteGroupBuilder api)
         {
 
-     
+
             var _group = api.MapGroup("/user");
 
             _group.MapGet("/", (UsersServices service) =>
