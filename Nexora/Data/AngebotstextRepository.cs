@@ -25,13 +25,13 @@ namespace Nexora.Data
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                var angebotstext = new angebotstext
+                var angebotstext = new Angebotstext
                 {
-                    id = _helpers.GetNullableInt(reader, "id") ?? 0,
-                    angebot_id = _helpers.GetNullableInt(reader, "angebot_id"),
-                    typ = _helpers.GetNullableInt(reader, "bezeichnung"),
-                    text = _helpers.GetNullableString(reader, "text"),
-                    mandant_id = _helpers.GetNullableInt(reader, "mandant_id")
+                    Id = _helpers.GetNullableInt(reader, "id") ?? 0,
+                    Angebot_id = _helpers.GetNullableInt(reader, "angebot_id"),
+                    Typ = _helpers.GetNullableInt(reader, "bezeichnung"),
+                    Text = _helpers.GetNullableString(reader, "text"),
+                    Mandant_id = _helpers.GetNullableInt(reader, "mandant_id")
                 };
                 angebotstexte.Add(angebotstext);
             }

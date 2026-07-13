@@ -34,3 +34,5 @@ namespace Nexora.Data
             }
             return katalogList;
         }
+    }
+}
