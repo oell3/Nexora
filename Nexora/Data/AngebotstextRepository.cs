@@ -4,21 +4,14 @@ using Npgsql;
 
 namespace Nexora.Data
 {
-    public class AngebotstextRepository
+    public class AngebotstextRepository(Database db, Helpers helpers)
     {
-        private readonly Database _db;
-        private readonly Helpers _helpers;
-
-        private AngebotstextRepository(Database db, Helpers helpers)
-        {
-            _db = db;
-            _helpers = helpers;
-        }
+  
 
         public async Task<List<Angebotstext>> GetAngebotstexteAsync(int mandant_id)
         {
             var angebotstexte = new List<Angebotstext>();
-            using var conn = _db.CreateConnection();
+            using var conn = db.CreateConnection();
             await conn.OpenAsync();
             using var cmd = new NpgsqlCommand("SELECT * FROM crm.angebotstext WHERE mandant_id = @mandant_id", conn);
             cmd.Parameters.AddWithValue("mandant_id", mandant_id);
@@ -27,11 +20,11 @@ namespace Nexora.Data
             {
                 var angebotstext = new Angebotstext
                 {
-                    Id = _helpers.GetNullableInt(reader, "id") ?? 0,
-                    Angebot_id = _helpers.GetNullableInt(reader, "angebot_id"),
-                    Typ = _helpers.GetNullableInt(reader, "bezeichnung"),
-                    Text = _helpers.GetNullableString(reader, "text"),
-                    Mandant_id = _helpers.GetNullableInt(reader, "mandant_id")
+                    Id = helpers.GetNullableInt(reader, "id") ?? 0,
+                    Angebot_id = helpers.GetNullableInt(reader, "angebot_id"),
+                    Typ = helpers.GetNullableInt(reader, "bezeichnung"),
+                    Text = helpers.GetNullableString(reader, "text"),
+                    Mandant_id = helpers.GetNullableInt(reader, "mandant_id")
                 };
                 angebotstexte.Add(angebotstext);
             }

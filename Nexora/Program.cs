@@ -1,11 +1,18 @@
 using Microsoft.AspNetCore.Identity;
 using Nexora.API;
+using Nexora.cookie;
+using Nexora.cookie.Nexora.Cookie;
 using Nexora.Data;
 using Nexora.Services;
 using Nexora.utils;
+using System.Security.Cryptography;
+using JWT;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -37,7 +44,7 @@ builder.Services.AddScoped<MandantRepository>();
 builder.Services.AddScoped<ObjekteRepository>();
 
 builder.Services.AddScoped<ProjektdetailRepositroy>();
-builder.Services.AddScoped<ProjekteRepository>();
+builder.Services.AddScoped<ProjektRepository>();
 
 builder.Services.AddScoped<RechnungenRepository>();
 
@@ -55,8 +62,27 @@ builder.Services.AddScoped<ZahlungRepositroy>();
 
 
 
+builder.Services.AddScoped<RefreshCookie>();
+builder.Services.AddScoped<UserServices>();
 
-builder.Services.AddScoped<UsersServices>();
+builder.Services.AddScoped<JwtService>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -66,7 +92,9 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
+var key = RandomNumberGenerator.GetBytes(64);
+var base64Key = Convert.ToBase64String(key);
+Console.WriteLine(base64Key);
 app.UseHttpsRedirection();
 
 app.MapControllers();

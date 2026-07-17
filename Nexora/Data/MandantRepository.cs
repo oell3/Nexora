@@ -3,19 +3,13 @@ using Nexora.utils;
 
 namespace Nexora.Data
 {
-    public class MandantRepository
+    public class MandantRepository(Database db, Helpers helpers)
     {
-        private readonly Database _db;
-        private readonly Helpers _helpers;
-        public MandantRepository(Database db, Helpers helpers)
-        {
-            _db = db;
-            _helpers = helpers;
-        }
+       
         public async Task<List<Mandant>> GetMandantenAsync()
         {
             var mandantenList = new List<Mandant>();
-            using var conn = _db.CreateConnection();
+            using var conn = db.CreateConnection();
             await conn.OpenAsync();
             using var cmd = new Npgsql.NpgsqlCommand("SELECT * FROM crm.mandant", conn);
             using var reader = await cmd.ExecuteReaderAsync();
@@ -23,15 +17,15 @@ namespace Nexora.Data
             {
                 var mandant = new Mandant
                 {
-                    Id = _helpers.GetNullableInt(reader, "id"),
-                    Name = _helpers.GetNullableString(reader, "name"),
-                    Slug = _helpers.GetNullableString(reader, "slug"),
-                    Email = _helpers.GetNullableString(reader, "email"),
-                    Telefon = _helpers.GetNullableString(reader, "telefon"),
-                    Tarif = _helpers.GetNullableString(reader, "tarif"),
-                    Status = _helpers.GetNullableString(reader, "status"),
-                    IBAN = _helpers.GetNullableString(reader, "iban"),
-                    BIC = _helpers.GetNullableString(reader, "bic")
+                    Id = helpers.GetNullableInt(reader, "id"),
+                    Name = helpers.GetNullableString(reader, "name"),
+                    Slug = helpers.GetNullableString(reader, "slug"),
+                    Email = helpers.GetNullableString(reader, "email"),
+                    Telefon = helpers.GetNullableString(reader, "telefon"),
+                    Tarif = helpers.GetNullableString(reader, "tarif"),
+                    Status = helpers.GetNullableString(reader, "status"),
+                    IBAN = helpers.GetNullableString(reader, "iban"),
+                    BIC = helpers.GetNullableString(reader, "bic")
                 };
                 mandantenList.Add(mandant);
             }

@@ -3,20 +3,12 @@ using Nexora.utils;
 
 namespace Nexora.Data
 {
-    public class ZahlungRepositroy
+    public class ZahlungRepositroy(Database db, Helpers helpers)
     {
-        private readonly Database _db;
-        private readonly Helpers _helpers;
-
-        public ZahlungRepositroy(Database db, Helpers helpers)
-        {
-            _db = db;
-            _helpers = helpers;
-        }
         public async Task<List<Zahlung>> GetZahlungenAsync(int mandant_id)
         {
             var zahlungList = new List<Zahlung>();
-            using var conn = _db.CreateConnection();
+            using var conn = db.CreateConnection();
             await conn.OpenAsync();
             using var cmd = new Npgsql.NpgsqlCommand("SELECT * FROM crm.zahlung WHERE mandant_id = @mandant_id", conn);
             cmd.Parameters.AddWithValue("mandant_id", mandant_id);
@@ -25,13 +17,13 @@ namespace Nexora.Data
             {
                 var zahlung = new Zahlung
                 {
-                    Id = _helpers.GetNullableInt(reader, "id"),
-                    Rechnungs_id = _helpers.GetNullableInt(reader, "rechnungs_id"),
-                    Datum = _helpers.GetNullableDateTime(reader, "datum"),
-                    Kunden_id = _helpers.GetNullableInt(reader, "kunden_id"),
-                    Status = _helpers.GetNullableString(reader, "status"),
-                    Betrag = _helpers.GetNullableDouble(reader, "betrag"),
-                    Mandant_id = _helpers.GetNullableInt(reader, "mandant_id")
+                    Id = helpers.GetNullableInt(reader, "id"),
+                    Rechnungs_id = helpers.GetNullableInt(reader, "rechnungs_id"),
+                    Datum = helpers.GetNullableDateTime(reader, "datum"),
+                    Kunden_id = helpers.GetNullableInt(reader, "kunden_id"),
+                    Status = helpers.GetNullableString(reader, "status"),
+                    Betrag = helpers.GetNullableDouble(reader, "betrag"),
+                    Mandant_id = helpers.GetNullableInt(reader, "mandant_id")
                 };
                 zahlungList.Add(zahlung);
             }

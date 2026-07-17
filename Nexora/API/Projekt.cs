@@ -2,7 +2,7 @@
 
 namespace Nexora.API
 {
-    public static class ProjekteApi
+    public static class ProjektApi
     {
 
         public static void MapProjekteEndpoint(this RouteGroupBuilder api)
@@ -13,6 +13,12 @@ namespace Nexora.API
 
                 Console.Write(await services.GetAllProjekte(1, 1));
                 return await services.GetAllProjekte(1, 1);
+            });
+
+            _group.MapGet("/{mandant_id:int}", async (int mandant_id, ProjekteServices services) =>
+            {
+                
+                return await services.GetAllProjektbyMandant(mandant_id);
             });
         }
     }

@@ -3,18 +3,12 @@ using Nexora.utils;
 using Npgsql;
 namespace Nexora.Data
 {
-    public class ObjekteRepository
+    public class ObjekteRepository(Database db, Helpers helpers)
     {
-        private readonly Database _db;
-        private readonly Helpers _helpers;
-        public ObjekteRepository(Database db, Helpers helpers)
-        {
-            _db = db;
-            _helpers = helpers;
-        }
+        
         public async Task<List<Objekt>> GetObjekteAsync(int mandant_id)
         {
-            using var conn = _db.CreateConnection();
+            using var conn = db.CreateConnection();
             using var cmd = new NpgsqlCommand("SELECT * FROM crm.objekte WHERE mandant_id = @mandant_id", conn);
             conn.Open();
             cmd.Parameters.AddWithValue("@mandant_id", mandant_id);
@@ -24,14 +18,14 @@ namespace Nexora.Data
             {
                 var objekte = new Objekt()
                 {
-                    Id = _helpers.GetNullableInt(reader, "id"),
-                    Kunden_id = _helpers.GetNullableInt(reader, "kunden_id"),
-                    Mandant_id = _helpers.GetNullableInt(reader, "mandant_id"),
-                    Adresse = _helpers.GetNullableString(reader, "adresse"),
-                    Plz = _helpers.GetNullableString(reader, "plz"),
-                    Stadt = _helpers.GetNullableString(reader, "stadt"),
-                    Lat = _helpers.GetNullableString(reader, "lat"),
-                    Lng = _helpers.GetNullableString(reader, "lng")
+                    Id = helpers.GetNullableInt(reader, "id"),
+                    Kunden_id = helpers.GetNullableInt(reader, "kunden_id"),
+                    Mandant_id = helpers.GetNullableInt(reader, "mandant_id"),
+                    Adresse = helpers.GetNullableString(reader, "adresse"),
+                    Plz = helpers.GetNullableString(reader, "plz"),
+                    Stadt = helpers.GetNullableString(reader, "stadt"),
+                    Lat = helpers.GetNullableString(reader, "lat"),
+                    Lng = helpers.GetNullableString(reader, "lng")
                 };
                 objekteList.Add(objekte);
             }
