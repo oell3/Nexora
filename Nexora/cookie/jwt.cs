@@ -4,6 +4,7 @@ using Nexora.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.BearerToken;
 
 namespace Nexora.cookie
 {

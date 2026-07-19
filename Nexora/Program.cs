@@ -9,6 +9,8 @@ using System.Security.Cryptography;
 using JWT;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -92,9 +94,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-var key = RandomNumberGenerator.GetBytes(64);
-var base64Key = Convert.ToBase64String(key);
-Console.WriteLine(base64Key);
+
 app.UseHttpsRedirection();
 
 app.MapControllers();
