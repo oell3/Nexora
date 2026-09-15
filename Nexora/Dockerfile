@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # syntax=docker/dockerfile:1
 
 # ---------------------------------------------------------------------------
@@ -65,4 +64,3 @@ ENV ASPNETCORE_URLS=http://+:8089
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "Nexora.dll"]
->>>>>>> 0a8fa5a3fe3fe034ca98bce15e621d9f206e4a9f
