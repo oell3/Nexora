@@ -44,8 +44,11 @@ services:
     ports:
       # Host-Port (links) und Container-Port (rechts) sind bewusst getrennt:
       #   API_HOST_PORT = Port am Docker-Host, SERVER_PORT = Port im Container.
-      # Meldet Docker "port is already allocated", hier API_HOST_PORT aendern.
-      - "${API_HOST_PORT:-8089}:${SERVER_PORT:-8089}"
+      # Meldet Docker "port is already allocated": freie Ports anzeigen mit
+      #   docker ps --format "{{.Names}}\t{{.Ports}}"
+      # und hier API_HOST_PORT aendern. Default ist 18089 statt 8089, weil auf
+      # Hosts mit mehreren Diensten 8080/8089 meist schon belegt sind.
+      - "${API_HOST_PORT:-18089}:${SERVER_PORT:-8089}"
     networks:
       - nexora
 
