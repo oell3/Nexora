@@ -21,7 +21,8 @@ services:
         condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      # Listenport (Kestrel / Server:Port) - muss zum Portmapping unten passen.
+      # Listenport IM CONTAINER (Kestrel / Server:Port). Der Host-Port wird
+      # separat ueber API_HOST_PORT gesetzt (siehe Portmapping unten).
       Server__Port: "${SERVER_PORT:-8089}"
       # Freigegebene Frontend-Origins, mehrere mit ";" trennen (Cors:AllowedOrigins).
       Cors__AllowedOrigins: "${CORS_ALLOWED_ORIGINS:-http://localhost:4200}"
@@ -38,7 +39,10 @@ services:
       Jwt__Secret: "${JWT_SECRET:?JWT_SECRET muss in der .env gesetzt sein}"
       TZ: "${TZ:-Europe/Berlin}"
     ports:
-      - "${SERVER_PORT:-8089}:${SERVER_PORT:-8089}"
+      # Host-Port (links) und Container-Port (rechts) sind bewusst getrennt:
+      #   API_HOST_PORT = Port am Docker-Host, SERVER_PORT = Port im Container.
+      # Meldet Docker "port is already allocated", hier API_HOST_PORT aendern.
+      - "${API_HOST_PORT:-8089}:${SERVER_PORT:-8089}"
     networks:
       - nexora
 
