@@ -1,6 +1,8 @@
-﻿namespace Nexora.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Nexora.Models
 {
-    public class Angebote
+    public class Angebot
     {
         public int? Id { get; set; }
         public string? Title { get; set; }
@@ -15,5 +17,8 @@
         public string? Schluss { get; set; }
         public string? Anrede { get; set; }
         public int? Mandant_id { get; set; }
+
+        [JsonPropertyName("groups")]
+        public List<AngebotGruppe>? AngebotGruppe { get; set; }
     }
 }

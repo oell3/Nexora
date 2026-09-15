@@ -11,13 +11,45 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using Microsoft.AspNetCore.HttpOverrides;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Listenport aus der Konfiguration (appsettings.json / appsettings.{Environment}.json
+// oder Umgebungsvariable Server__Port). Ist nichts gesetzt, gelten die URLs aus
+// launchSettings.json bzw. ASPNETCORE_URLS.
+var serverPort = builder.Configuration.GetValue<int?>("Server:Port");
+if (serverPort is > 0)
+{
+    builder.WebHost.ConfigureKestrel(options => options.ListenAnyIP(serverPort.Value));
+}
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
+});
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+// Freigegebene Frontend-Origins, mehrere durch ";" getrennt
+// (Konfiguration: Cors:AllowedOrigins, in Docker z. B. Cors__AllowedOrigins).
+var allowedOrigins = (builder.Configuration["Cors:AllowedOrigins"] ?? "http://localhost:4200")
+    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 // DI
 builder.Services.AddScoped<Database>();
@@ -27,7 +59,7 @@ builder.Services.AddScoped<ProjekteServices>();
 builder.Services.AddScoped<Helpers>();
 
 //DI Repositories
-builder.Services.AddScoped<AngeboteRepository>();
+builder.Services.AddScoped<AngebotRepository>();
 builder.Services.AddScoped<AngebotGruppenRepository>();
 builder.Services.AddScoped<AngebotPositionRepositorycs>();
 builder.Services.AddScoped<AngebotRevisionGruppenRepository>();
@@ -88,6 +120,8 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
+
 var api = app.MapGroup("/api");
 
 if (app.Environment.IsDevelopment())
@@ -95,12 +129,19 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors("AllowAngular");
+
 app.UseHttpsRedirection();
+
+
 
 app.MapControllers();
 
-// Endpoints
 api.MapUserEndpoint();
 api.MapProjekteEndpoint();
+api.MapAuthEndpoint();
+api.MapAngebotEndPoint();
+// Endpoints
+
 
 app.Run();

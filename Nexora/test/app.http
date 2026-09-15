@@ -1,8 +1,100 @@
-# For more info on HTTP files go to https://aka.ms/vs/httpfile
-Post https://localhost:7036/api/user/login
+
+POST https://localhost:7036/api/angebot/save
 Content-Type: application/json
+Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoidXNlciIsIm1hbmRhbnRfaWQiOiIxIiwianRpIjoiZTZjYTBlOTgtYjA3Ni00MGE3LThjNTQtMzU2MGM3OGM5MDIxIiwiZXhwIjoxNzg1NzE5NDM2LCJpc3MiOiJuZXhvcmEtYXBpIiwiYXVkIjoibmV4b3JhLWFuZ3VsYXIifQ.qe07cAq-xD80uDr0Y6qGuOAOYwTs8Tv6WVsdnFvVVu0
 
 {
-  "email": "test",
-  "password": "test"
+    "title": "wewe",
+    "einleitung": "<p>wewe</p>",
+    "schluss": "",
+    "kundenId": null,
+    "objektId": null,
+    "projektId": null,
+    "anrede": "Herr",
+    "betrag": 0.00,
+    "ansprechpartnerId": null,
+    "vorlageEinleitungId": null,
+    "vorlageSchlussId": null,
+    "groups": [
+        {
+            "Gruppen_nr": 1,
+            "name": "Leistungsgruppe 1",
+            "collapsed": false,
+            "rows": [
+                {
+                    "id": 1,
+                    "typ": "material",
+                    "bezeichnung": "wewe",
+                    "menge": 1,
+                    "ek": 0,
+                    "aufschlag": 0,
+                    "rabatt": 0,
+                    "einheit": "Stk",
+                    "mischId": null,
+                    "gruppeId": null,
+                    "parentMischId": null,
+                    "parentGruppeId": null,
+                    "collapsed": false,
+                    "remark": ""
+                },
+                {
+                    "id": 3,
+                    "typ": "material",
+                    "bezeichnung": "wew",
+                    "menge": 1,
+                    "ek": 0,
+                    "aufschlag": 0,
+                    "rabatt": 0,
+                    "einheit": "Stk",
+                    "mischId": null,
+                    "gruppeId": null,
+                    "parentMischId": null,
+                    "parentGruppeId": null,
+                    "collapsed": false,
+                    "remark": ""
+                }
+            ]
+        },
+        {
+            "Gruppen_nr": 2,
+            "Sortierung":2,
+            "name": "Leistungsgruppe 2",
+            "collapsed": false,
+            "rows": [
+                {
+                    "id": 2,
+                    "typ": "material",
+                    "bezeichnung": "wewe",
+                    "menge": 1,
+                    "ek": 0.04,
+                    "aufschlag": 0,
+                    "rabatt": 0,
+                    "einheit": "Stk",
+                    "mischId": null,
+                    "gruppeId": null,
+                    "parentMischId": null,
+                    "parentGruppeId": null,
+                    "collapsed": false,
+                    "remark": ""
+                },
+                {
+                    "id": 4,
+                    "typ": "material",
+                    "bezeichnung": "we",
+                    "menge": 1,
+                    "ek": 0.05,
+                    "aufschlag": 0,
+                    "rabatt": 0,
+                    "einheit": "Stk",
+                    "mischId": null,
+                    "gruppeId": null,
+                    "parentMischId": null,
+                    "parentGruppeId": null,
+                    "collapsed": false,
+                    "remark": ""
+                }
+            ]
+        }
+    ],
+    "haschange": true
 }

@@ -14,7 +14,7 @@ namespace Nexora.Services
         {
 
             var kunden = new KundenRepository(db, helpers);
-            var angebote = new AngeboteRepository(db, helpers);
+            var angebote = new AngebotRepository(db, helpers);
             var objekte = new ObjekteRepository(db, helpers);
             var rechnungen = new RechnungenRepository(db, helpers);
             var projekte = new ProjektRepository(db, helpers);

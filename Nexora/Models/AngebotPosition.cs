@@ -5,9 +5,11 @@
         public int? Id { get; set; }
         public int? Angebot_id { get; set; }
         public int? Group_id { get; set; }
+        public int? Gruppe_id { get; set; }
         public int? Misch_id { get; set; }
         public int? Parent_gruppe_id { get; set; }
-        public int? Typ { get; set; }
+        public int? parent_Misch_id { get; set; }
+        public string? Typ { get; set; }
 
         public int? Nr { get; set; }
         public string? Bezeichnung { get; set; }

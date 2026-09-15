@@ -361,3 +361,55 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# ===========================================================================
+# Nexora - projekt- und betriebsspezifische Ausschluesse
+# (alles hier darf NICHT ins Repository uebertragen werden)
+# ===========================================================================
+
+# --- Docker / Container ----------------------------------------------------
+# Lokale Compose-Ueberschreibungen (eigene Ports, Volumes, Debug-Einstellungen)
+docker-compose.override.yml
+docker-compose.*.override.yml
+# Compose-Dateien in Unterordnern (VS-Orchestrierung liegt im Projektordner)
+**/docker-compose.override.yml
+# Lokale Datenverzeichnisse, falls die DB als Bind-Mount statt Volume laeuft
+pgdata/
+pgdata*/
+.postgres/
+# Publish-/Build-Ausgaben fuer Container-Images
+Nexora/publish/
+Nexora/out/
+
+# --- Zugangsdaten / Umgebungsvariablen -------------------------------------
+.env
+.env.*
+!.env.example
+appsettings.*.local.json
+secrets.json
+
+# --- Datenbank / lokale Daten ----------------------------------------------
+# Dumps und Init-Skripte aus ./db/init enthalten echte Daten
+db/
+*.dump
+*.sql.gz
+*.bak
+
+# --- Zertifikate / Schluessel ----------------------------------------------
+*.p12
+*.pfx.bak
+*.pem
+*.key
+*.crt
+certs/
+.tls/
+
+# --- IDE / Editor ----------------------------------------------------------
+.idea/
+.vscode/
+*.sln.DotSettings.user
+
+# --- Betriebssystem --------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini

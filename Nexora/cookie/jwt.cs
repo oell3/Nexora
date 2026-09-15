@@ -53,6 +53,8 @@ namespace Nexora.cookie
                     signingCredentials: creds
                 );
 
+               
+
                 return new JwtSecurityTokenHandler().WriteToken(token);
             }
         }

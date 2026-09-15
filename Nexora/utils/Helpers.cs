@@ -15,6 +15,10 @@ namespace Nexora.utils
             var ordinal = reader.GetOrdinal(column);
             return reader.IsDBNull(ordinal) ? null : reader.GetDateTime(ordinal);
         }
+        public int GetInt(NpgsqlDataReader reader, string column)
+        {
+            return reader.GetInt32(reader.GetOrdinal(column));
+        }
 
         public int? GetNullableInt(NpgsqlDataReader reader, string column)
         {

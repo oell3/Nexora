@@ -34,3 +34,23 @@ secrets.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Docker / Container (lokal, nicht uebertragen)
+docker-compose.override.yml
+docker-compose.*.override.yml
+pgdata/
+.postgres/
+publish/
+out/
+
+# Secrets / Zertifikate
+appsettings.*.local.json
+*.p12
+*.pem
+*.key
+*.crt
+certs/
+.tls/
+
+# Editor
+.vscode/

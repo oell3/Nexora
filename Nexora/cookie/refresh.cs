@@ -3,17 +3,35 @@ using Npgsql;
 using NpgsqlTypes;
 using System.Net;
 using UAParser;
+using System.Security.Cryptography;
 
 namespace Nexora.cookie;
 public class  RefreshCookie()
 {
-    public string GenerateNewRefreshToken(Database db,int userID, IPAddress ip, string devicename)
+
+    public async Task<string> Refresh(Database db, string refreshToken, IPAddress ip, string devicename)
+    {
+        var tokenHash = HashToken(refreshToken);
+        using var conn = db.CreateConnection();
+        await conn.OpenAsync();
+
+        var cmd = new NpgsqlCommand(
+            "SELECT user_id FROM crm.refresh_tokens WHERE token_hash = @token_hash", conn
+            );
+        cmd.Parameters.AddWithValue("token_hash", tokenHash);
+        var res = await cmd.ExecuteScalarAsync();
+        int user_id = Convert.ToInt32(res);
+
+
+        return await GenerateNewRefreshToken(db, user_id, ip, devicename);
+    }
+    public async Task<string> GenerateNewRefreshToken(Database db,int userID, IPAddress ip, string devicename)
     {
         var refreshToken = CreateRefreshToken();
         var hashedToken = HashToken(Convert.ToBase64String(refreshToken));
         
         SaveRefreshToken(db, userID, ip, devicename, hashedToken, DateTime.UtcNow.AddDays(30));
-        RevokeRefreshToken(db, userID, hashedToken);
+        await RevokeRefreshToken(db, userID, hashedToken);
 
         return Convert.ToBase64String(refreshToken);
     }
@@ -71,9 +89,9 @@ public class  RefreshCookie()
     public string HashToken(string token)
     {
 
-        using var sha256 = System.Security.Cryptography.SHA256.Create();
+        
         var bytes = System.Text.Encoding.UTF8.GetBytes(token);
-        var hash = sha256.ComputeHash(bytes);
+        var hash = SHA256.HashData(bytes);
         return Convert.ToBase64String(hash);
     }
 

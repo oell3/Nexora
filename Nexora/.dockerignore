@@ -1,0 +1,23 @@
+# Build-Artefakte
+**/bin/
+**/obj/
+
+# IDE / lokale Einstellungen
+**/.vs/
+**/.vscode/
+**/*.user
+**/*.suo
+
+# Git und lokale Konfiguration
+**/.git/
+**/.gitignore
+**/.env
+**/.env.*
+
+# Entwicklungs-Konfiguration (Secrets) gehoert nicht ins Image
+**/appsettings.Development.json
+
+# Docker-Dateien selbst
+**/Dockerfile*
+**/.dockerignore
+**/docker-compose*.yml
