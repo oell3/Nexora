@@ -61,3 +61,10 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+# ---------------------------------------------------------------------------
+# Container- und Linux-Dateien: immer mit LF auschecken
+# Hintergrund: core.autocrlf=true wuerde hier CRLF schreiben. CRLF zerstoert
+# Zeilenfortsetzungen (\\) in Dockerfiles und Shell-Skripten im Buildcontext.
+# ---------------------------------------------------------------------------
+Dockerfile* text eol=lf
+.dockerignore text eol=lf
