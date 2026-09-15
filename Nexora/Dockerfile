@@ -36,14 +36,14 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Der Listenport wird bewusst NICHT hier festgelegt, sondern ueber die
 # Konfiguration gesteuert (siehe appsettings.Production.json und docker-compose.yml):
-#   "Server": { "Port": 8080 }   oder Umgebungsvariable Server__Port
+#   "Server": { "Port": 8089 }   oder Umgebungsvariable Server__Port
 # EXPOSE ist reine Dokumentation und aendert das Binding nicht.
-EXPOSE 8080
+EXPOSE 8089
 
-# Fallback (:-8080) greift nur, wenn Server__Port nicht gesetzt ist - er muss
+# Fallback (:-8089) greift nur, wenn Server__Port nicht gesetzt ist - er muss
 # daher dem Default aus appsettings.Production.json entsprechen.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=5 \
-    CMD curl -fsS "http://localhost:${Server__Port:-8080}/api/auth/status" || exit 1
+    CMD curl -fsS "http://localhost:${Server__Port:-8089}/api/auth/status" || exit 1
 
 USER app
 
