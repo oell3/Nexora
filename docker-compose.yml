@@ -10,6 +10,15 @@
 # der Portainer-Datenbank - die Datei .env muss NICHT im Repository oder auf
 # dem Server liegen.
 #
+# Build/Pull: Das Image wird ausschliesslich aus ./Nexora gebaut (kein Registry-
+# Image, kein "docker login" noetig). Deshalb ist KEIN "image:"-Name gesetzt und
+# pull_policy: build aktiv: "docker compose pull" ueberspringt den Service - ohne
+# diese Einstellung versucht Compose, den lokal gebauten Namen aus einer Registry
+# zu ziehen ("pull access denied for nexora-api"). pull_policy: build baut das
+# Image ausserdem bei JEDEM Deploy neu, damit Code-Aenderungen aus dem Repository
+# ankommen. In Portainer ist der Schalter "Re-pull image and redeploy" daher
+# nicht noetig (und wuerde den Fehler wieder ausloesen).
+#
 # Datenbank: Es wird der BEREITS LAUFENDE Postgres-Container genutzt
 # (Container "postgresql" im Netzwerk "postgresql_default"), nicht ein zweiter
 # Postgres. Deshalb verbindet sich nur die api mit dem externen Netzwerk - der
@@ -22,7 +31,10 @@ services:
     build:
       context: ./Nexora
       dockerfile: Dockerfile
-    image: nexora-api:latest
+    # Kein "image:"-Name, nur build: Das verhindert, dass Compose den lokal
+    # gebauten Namen "nexora-api:latest" aus einer Registry ziehen will.
+    # Compose vergibt automatisch genau diesen Tag (Projektname nexora + api).
+    pull_policy: build
     container_name: nexora-api
     restart: unless-stopped
     # Nur fuer den auskommentierten eigenen db-Service (siehe Dateiende):
