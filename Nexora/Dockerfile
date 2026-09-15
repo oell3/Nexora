@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # syntax=docker/dockerfile:1
 
 # ---------------------------------------------------------------------------
@@ -38,31 +37,14 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 # Der Listenport wird bewusst NICHT hier festgelegt, sondern ueber die
 # Konfiguration gesteuert (siehe appsettings.Production.json und docker-compose.yml):
 #   "Server": { "Port": 8080 }   oder Umgebungsvariable Server__Port
-EXPOSE 8089
+# EXPOSE ist reine Dokumentation und aendert das Binding nicht.
+EXPOSE 8080
 
+# Fallback (:-8080) greift nur, wenn Server__Port nicht gesetzt ist - er muss
+# daher dem Default aus appsettings.Production.json entsprechen.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=5 \
-    CMD curl -fsS "http://localhost:${Server__Port:-8089}/api/auth/status" || exit 1
+    CMD curl -fsS "http://localhost:${Server__Port:-8080}/api/auth/status" || exit 1
 
 USER app
 
 ENTRYPOINT ["dotnet", "Nexora.dll"]
-=======
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
-WORKDIR /src
-COPY . .
-
-RUN dotnet restore
-RUN dotnet publish Nexora.csproj -c Release -o /app/publish
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-
-WORKDIR /app
-COPY --from=build /app/publish .
-
-ENV ASPNETCORE_URLS=http://+:8089
-
-EXPOSE 8080
-
-ENTRYPOINT ["dotnet", "Nexora.dll"]
->>>>>>> 0a8fa5a3fe3fe034ca98bce15e621d9f206e4a9f
