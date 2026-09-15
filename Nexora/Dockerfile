@@ -45,7 +45,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=5 \
 USER app
 
 ENTRYPOINT ["dotnet", "Nexora.dll"]
-=======
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /src
