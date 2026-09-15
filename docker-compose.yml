@@ -1,5 +1,8 @@
 # Konfiguration: siehe .env.example (dokumentiert alle Variablen)
 #
+# Diese Datei ist der einzige Stack des Projekts und liegt im Repository-Root.
+# Portainer (Repository-Methode): Compose path = docker-compose.yml
+#
 # Portainer: Es wird bewusst KEIN "env_file" verwendet. Die Werte in "${...}"
 # loest Compose aus der Stack-Umgebung auf. In Portainer werden sie im
 # Stack-Dialog unter "Environment variables" gesetzt (oder der Inhalt der
