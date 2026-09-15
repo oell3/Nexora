@@ -38,10 +38,10 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 # Der Listenport wird bewusst NICHT hier festgelegt, sondern ueber die
 # Konfiguration gesteuert (siehe appsettings.Production.json und docker-compose.yml):
 #   "Server": { "Port": 8080 }   oder Umgebungsvariable Server__Port
-EXPOSE 8080
+EXPOSE 8089
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=5 \
-    CMD curl -fsS "http://localhost:${Server__Port:-8080}/api/auth/status" || exit 1
+    CMD curl -fsS "http://localhost:${Server__Port:-8089}/api/auth/status" || exit 1
 
 USER app
 
@@ -60,7 +60,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/publish .
 
-ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_URLS=http://+:8089
 
 EXPOSE 8080
 

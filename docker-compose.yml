@@ -1,4 +1,11 @@
-# Konfiguration: siehe .env.example (kopieren nach .env)
+# Konfiguration: siehe .env.example (dokumentiert alle Variablen)
+#
+# Portainer: Es wird bewusst KEIN "env_file" verwendet. Die Werte in "${...}"
+# loest Compose aus der Stack-Umgebung auf. In Portainer werden sie im
+# Stack-Dialog unter "Environment variables" gesetzt (oder der Inhalt der
+# .env per "Load variables from .env file" eingefuegt) und liegen damit in
+# der Portainer-Datenbank - die Datei .env muss NICHT im Repository oder auf
+# dem Server liegen.
 name: nexora
 
 services:
@@ -47,6 +54,8 @@ services:
     volumes:
       - nexora-db-data:/var/lib/postgresql/data
       # *.sql/*.sh hier ablegen - wird beim ersten Start eingespielt (z. B. pg_dump).
+      # Portainer: relativer Pfad, wird im Portainer-Datenverzeichnis erwartet
+      # (/data/compose/<stack-id>/db/init). Fuer einen eigenen Pfad absolut angeben.
       - ./db/init:/docker-entrypoint-initdb.d:ro
     ports:
       # Nur lokal erreichbar, z. B. fuer pgAdmin. Host-Port 5433, damit der
