@@ -28,17 +28,17 @@ namespace Nexora.Data
                 var angebot = new Angebot
                 {
                     Id = reader.GetInt32(reader.GetOrdinal("id")),
-                    Title = helpers.GetNullableString(reader, "title"),
+                    title = helpers.GetNullableString(reader, "title"),
                     Angebotsnummer = helpers.GetNullableString(reader, "angebotsnummer"),
-                    Objekt_id = reader.GetInt32(reader.GetOrdinal("objekt_id")),
-                    Kunden_id = reader.GetInt32(reader.GetOrdinal("kunden_id")),
+                    objektId = reader.GetInt32(reader.GetOrdinal("objekt_id")),
+                    kundenId = reader.GetInt32(reader.GetOrdinal("kunden_id")),
                     Betrag = reader.GetDouble(reader.GetOrdinal("betrag")),
                     Datum = helpers.GetNullableDateTime(reader, "datum"),
                     Status = helpers.GetNullableString(reader, "status"),
-                    Projekt_id = reader.GetInt32(reader.GetOrdinal("projekt_id")),
-                    Einleitung = helpers.GetNullableString(reader, "einleitung"),
-                    Schluss = helpers.GetNullableString(reader, "schluss"),
-                    Anrede = helpers.GetNullableString(reader, "anrede"),
+                    projektId = reader.GetInt32(reader.GetOrdinal("projekt_id")),
+                    einleitung = helpers.GetNullableString(reader, "einleitung"),
+                    schluss = helpers.GetNullableString(reader, "schluss"),
+                    anrede = helpers.GetNullableString(reader, "anrede"),
                     Mandant_id = reader.GetInt32(reader.GetOrdinal("mandant_id"))
                 };
                 angebote.Add(angebot);
@@ -69,16 +69,16 @@ namespace Nexora.Data
         ) RETURNING id", conn);
 
 
-            cmd.Parameters.AddWithValue("title", angebot.Title ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("title", angebot.title ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("angebotsnummer", angebotsnummer);
-            cmd.Parameters.AddWithValue("objekt_id", angebot.Objekt_id ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("kunden_id", angebot.Kunden_id ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("objekt_id", angebot.objektId ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("kunden_id", angebot.kundenId ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("betrag", angebot.Betrag ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("status", "in Bearbeitung");
-            cmd.Parameters.AddWithValue("projekt_id", angebot.Projekt_id ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("einleitung", angebot.Einleitung ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("schluss", angebot.Schluss ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("anrede", angebot.Anrede ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("projekt_id", angebot.projektId ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("einleitung", angebot.einleitung ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("schluss", angebot.schluss ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("anrede", angebot.anrede ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("mandant_id", mandant_id);
             cmd.Parameters.AddWithValue("user_id", user_id);
 

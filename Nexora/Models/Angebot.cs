@@ -5,17 +5,17 @@ namespace Nexora.Models
     public class Angebot
     {
         public int? Id { get; set; }
-        public string? Title { get; set; }
+        public string? title { get; set; }
         public string? Angebotsnummer { get; set; }
-        public int? Objekt_id { get; set; }
-        public int? Kunden_id { get; set; }
+        public int? objektId { get; set; }
+        public int? kundenId { get; set; }
         public double? Betrag { get; set; }
         public DateTime? Datum { get; set; }
         public string? Status { get; set; }
-        public int? Projekt_id { get; set; }
-        public string? Einleitung { get; set; }
-        public string? Schluss { get; set; }
-        public string? Anrede { get; set; }
+        public int? projektId { get; set; }
+        public string? einleitung { get; set; }
+        public string? schluss { get; set; }
+        public string? anrede { get; set; }
         public int? Mandant_id { get; set; }
 
         [JsonPropertyName("groups")]
