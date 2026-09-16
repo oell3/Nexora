@@ -20,7 +20,6 @@ namespace Nexora.API
                     return Results.Unauthorized();
                 }
                 */
-                Console.WriteLine("Hallo");
 
                 Console.WriteLine(angebot.AngebotGruppe);
                 foreach(var gruppe in angebot.AngebotGruppe)
