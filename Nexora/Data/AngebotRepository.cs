@@ -33,7 +33,7 @@ namespace Nexora.Data
                     objektId = reader.GetInt32(reader.GetOrdinal("objekt_id")),
                     kundenId = reader.GetInt32(reader.GetOrdinal("kunden_id")),
                     Betrag = reader.GetDouble(reader.GetOrdinal("betrag")),
-                    Datum = helpers.GetNullableDateTime(reader, "datum"),
+                    angebotsdatum = helpers.GetNullableDateTime(reader, "datum"),
                     Status = helpers.GetNullableString(reader, "status"),
                     projektId = reader.GetInt32(reader.GetOrdinal("projekt_id")),
                     einleitung = helpers.GetNullableString(reader, "einleitung"),
