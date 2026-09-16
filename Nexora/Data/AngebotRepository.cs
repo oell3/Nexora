@@ -61,11 +61,11 @@ namespace Nexora.Data
         INSERT INTO crm.angebote (
             title, angebotsnummer, objekt_id, kunden_id,
             betrag, status, projekt_id, einleitung,
-            schluss, anrede, mandant_id, user_id
+            schluss, datum, anrede, mandant_id, user_id
         ) VALUES (
             @title, @angebotsnummer, @objekt_id, @kunden_id,
             @betrag, @status, @projekt_id, @einleitung,
-            @schluss, @anrede, @mandant_id, @user_id
+            @schluss, @datum, @anrede, @mandant_id, @user_id
         ) RETURNING id", conn);
 
           
@@ -81,6 +81,7 @@ namespace Nexora.Data
             cmd.Parameters.AddWithValue("projekt_id", angebot.projektId ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("einleitung", angebot.einleitung ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("schluss", angebot.schluss ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("datum", angebot.angebotsdatum ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("anrede", angebot.anrede ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("mandant_id", mandant_id);
             cmd.Parameters.AddWithValue("user_id", user_id);

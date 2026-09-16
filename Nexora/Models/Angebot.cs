@@ -10,7 +10,7 @@ namespace Nexora.Models
         public int? objektId { get; set; }
         public int? kundenId { get; set; }
         public double? Betrag { get; set; }
-        public DateTime? Datum { get; set; }
+        public DateTime? angebotsdatum { get; set; }
         public string? Status { get; set; }
         public int? projektId { get; set; }
         public string? einleitung { get; set; }
