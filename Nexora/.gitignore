@@ -12,6 +12,11 @@ obj/
 # Rider
 .idea/
 
+#githooks
+.githooks
+/.githooks/*
+
+
 # NuGet
 *.nupkg
 packages/

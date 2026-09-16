@@ -50,7 +50,7 @@ namespace Nexora.Data
 
             Console.WriteLine(angebot);
 
-            // Best Practice: Verbindung einmal öffnen und für alle Gruppen wiederverwenden
+            // Best Practice: tetstVerbindung einmal öffnen und für alle Gruppen wiederverwenden
             await conn.OpenAsync();
             foreach (var Gruppe in angebot.AngebotGruppe)
             {
