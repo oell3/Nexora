@@ -91,7 +91,7 @@ namespace Nexora.Data
             Console.WriteLine("Parameterwerte:");
             foreach (NpgsqlParameter param in cmd.Parameters)
             {
-                Console.WriteLine($"{param.Name}: {param.Value}");
+                Console.WriteLine($"{param.ParameterName}: {param.Value}");
             }
 
             var angebotGruppe = new AngebotGruppenRepository(db, helpers);
