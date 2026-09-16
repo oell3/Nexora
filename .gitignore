@@ -413,3 +413,4 @@ certs/
 .DS_Store
 Thumbs.db
 desktop.ini
+/.githooks
