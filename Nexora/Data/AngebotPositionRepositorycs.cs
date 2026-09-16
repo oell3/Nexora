@@ -57,7 +57,7 @@ namespace Nexora.Data
                 gruppe_id, parent_gruppe_id,typ,nr,bezeichnung,menge,einheit,ek,aufschlag,rabatt,ep,
                 gp,sortierung,bemerkung,positionsart,mandant_id)
                 VALUES (@angebot_id, @group_id, @misch_id, @parent_misch_id, @gruppe_id, @parent_gruppe_id, 
-                @typ::angebot_positionen_typ, @nr, @bezeichnung, @menge, @einheit, @ek, @aufschlag, @rabatt, @ep, @gp, @sortierung, 
+                @typ, @nr, @bezeichnung, @menge, @einheit, @ek, @aufschlag, @rabatt, @ep, @gp, @sortierung, 
                 @bemerkung, @positionsart, @mandant_id)
                 RETURNING id", conn);
 
@@ -72,7 +72,13 @@ namespace Nexora.Data
                 cmd.Parameters.AddWithValue("group_id", gruppe_id);
                 cmd.Parameters.AddWithValue("gruppe_id", position.Gruppe_id ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("parent_gruppe_id", position.Parent_gruppe_id ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("typ", position.Typ ?? (object)DBNull.Value);
+                // typ ist in der Datenbank ein Enum (crm.angebot_positionen_typ). Ein
+                // Parameter ohne festen Typ laesst PostgreSQL den Typ aus der Zielspalte
+                // ableiten. Ein Cast wie "@typ::angebot_positionen_typ" wuerde dagegen
+                // vom search_path der Verbindung abhaengen und schlaegt fehl, wenn das
+                // Schema crm nicht im search_path liegt.
+                var typParameter = cmd.Parameters.Add(new Npgsql.NpgsqlParameter("typ", NpgsqlTypes.NpgsqlDbType.Unknown));
+                typParameter.Value = position.Typ ?? (object)DBNull.Value;
                 cmd.Parameters.AddWithValue("nr", position.Nr ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("bezeichnung", position.Bezeichnung ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("menge", position.Menge ?? (object)DBNull.Value);
