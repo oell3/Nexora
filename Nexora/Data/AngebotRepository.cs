@@ -68,6 +68,9 @@ namespace Nexora.Data
             @schluss, @anrede, @mandant_id, @user_id
         ) RETURNING id", conn);
 
+          
+
+
 
             cmd.Parameters.AddWithValue("title", angebot.title ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("angebotsnummer", angebotsnummer);
@@ -83,6 +86,13 @@ namespace Nexora.Data
             cmd.Parameters.AddWithValue("user_id", user_id);
 
             angebot.Id = (int)(long)await cmd.ExecuteScalarAsync();
+
+            //füge hier eine Consolenausgabe ein, um die Werte aller Parameter zu überprüfen
+            Console.WriteLine("Parameterwerte:");
+            foreach (NpgsqlParameter param in cmd.Parameters)
+            {
+                Console.WriteLine($"{param.Name}: {param.Value}");
+            }
 
             var angebotGruppe = new AngebotGruppenRepository(db, helpers);
 
