@@ -72,6 +72,7 @@ services:
       - "${API_HOST_PORT:-18089}:${SERVER_PORT:-8089}"
     networks:
       - dbnet
+      - crmnet
 
 # ---------------------------------------------------------------------------
 # Alternative: eigener Postgres-Container im Stack
@@ -113,13 +114,15 @@ services:
 #   nexora-db-data:
 
 networks:
-  # Netzwerk des vorhandenen Postgres-Containers. external: true bedeutet: das
-  # Netzwerk wird NICHT von diesem Stack erstellt, sondern muss bereits
-  # existieren (hier "postgresql_default"). Dadurch erreicht die api den
-  # Postgres unter seinem Containernamen (DB_HOST).
+  # Netzwerk des vorhandenen Postgres-Containers.
   dbnet:
     external: true
-    name: "${DB_NETWORK:-postgresql_default}"
+    name: postgresql_default
+
+  # Externes CRM-Netzwerk fuer weitere CRM-Dienste.
+  crmnet:
+    external: true
+    name: crm-network
 
   # Wird nur fuer den auskommentierten eigenen db-Service gebraucht.
   nexora:

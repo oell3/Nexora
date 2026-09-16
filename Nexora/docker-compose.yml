@@ -1,0 +1,129 @@
+# Konfiguration: siehe .env.example (dokumentiert alle Variablen)
+#
+# Diese Datei ist der einzige Stack des Projekts und liegt im Repository-Root.
+# Portainer (Repository-Methode): Compose path = docker-compose.yml
+#
+# Portainer: Es wird bewusst KEIN "env_file" verwendet. Die Werte in "${...}"
+# loest Compose aus der Stack-Umgebung auf. In Portainer werden sie im
+# Stack-Dialog unter "Environment variables" gesetzt (oder der Inhalt der
+# .env per "Load variables from .env file" eingefuegt) und liegen damit in
+# der Portainer-Datenbank - die Datei .env muss NICHT im Repository oder auf
+# dem Server liegen.
+#
+# Build/Pull: Das Image wird ausschliesslich aus ./Nexora gebaut (kein Registry-
+# Image, kein "docker login" noetig). Deshalb ist KEIN "image:"-Name gesetzt und
+# pull_policy: build aktiv: "docker compose pull" ueberspringt den Service - ohne
+# diese Einstellung versucht Compose, den lokal gebauten Namen aus einer Registry
+# zu ziehen ("pull access denied for nexora-api"). pull_policy: build baut das
+# Image ausserdem bei JEDEM Deploy neu, damit Code-Aenderungen aus dem Repository
+# ankommen. In Portainer ist der Schalter "Re-pull image and redeploy" daher
+# nicht noetig (und wuerde den Fehler wieder ausloesen).
+#
+# Datenbank: Es wird der BEREITS LAUFENDE Postgres-Container genutzt
+# (Container "postgresql" im Netzwerk "postgresql_default"), nicht ein zweiter
+# Postgres. Deshalb verbindet sich nur die api mit dem externen Netzwerk - der
+# Container ist dort unter seinem Namen erreichbar (DB_HOST), ohne Portmapping.
+# Eine eigene Postgres-Definition liegt auskommentiert am Dateiende.
+name: nexora
+
+services:
+  api:
+    build:
+      context: ./Nexora
+      dockerfile: Dockerfile
+    # Kein "image:"-Name, nur build: Das verhindert, dass Compose den lokal
+    # gebauten Namen "nexora-api:latest" aus einer Registry ziehen will.
+    # Compose vergibt automatisch genau diesen Tag (Projektname nexora + api).
+    pull_policy: build
+    container_name: nexora-api
+    restart: unless-stopped
+    # Nur fuer den auskommentierten eigenen db-Service (siehe Dateiende):
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      # Listenport IM CONTAINER (Kestrel / Server:Port). Der Host-Port wird
+      # separat ueber API_HOST_PORT gesetzt (siehe Portmapping unten).
+      Server__Port: "${SERVER_PORT:-8089}"
+      # Freigegebene Frontend-Origins, mehrere mit ";" trennen (Cors:AllowedOrigins).
+      Cors__AllowedOrigins: "${CORS_ALLOWED_ORIGINS:-http://localhost:4200}"
+      # Datenbank (Database:*). DB_HOST ist der Containername des vorhandenen
+      # Postgres; er ist ueber das gemeinsame Docker-Netzwerk aufloesbar
+      # (siehe networks unten). DB_PORT ist der Port IM Container (5432),
+      # nicht ein Port am Docker-Host.
+      Database__Host: "${DB_HOST:-postgresql}"
+      Database__Port: "${DB_PORT:-5432}"
+      Database__Username: "${DB_USER:-trix0}"
+      Database__Password: "${DB_PASSWORD:?DB_PASSWORD muss in der Stack-Umgebung gesetzt sein}"
+      Database__Database: "${DB_NAME:-angebotstool}"
+      # JWT (Jwt:*). Das Secret wird zum Signieren der Access-Tokens benoetigt.
+      Jwt__Issuer: "${JWT_ISSUER:-Nexora}"
+      Jwt__Audience: "${JWT_AUDIENCE:-Nexora}"
+      Jwt__Secret: "${JWT_SECRET:?JWT_SECRET muss in der Stack-Umgebung gesetzt sein}"
+      TZ: "${TZ:-Europe/Berlin}"
+    ports:
+      # Host-Port (links) und Container-Port (rechts) sind bewusst getrennt:
+      #   API_HOST_PORT = Port am Docker-Host, SERVER_PORT = Port im Container.
+      # Meldet Docker "port is already allocated": freie Ports anzeigen mit
+      #   docker ps --format "{{.Names}}\t{{.Ports}}"
+      # und hier API_HOST_PORT aendern. Default ist 18089 statt 8089, weil auf
+      # Hosts mit mehreren Diensten 8080/8089 meist schon belegt sind.
+      - "${API_HOST_PORT:-18089}:${SERVER_PORT:-8089}"
+    networks:
+      - dbnet
+      - crmnet
+
+# ---------------------------------------------------------------------------
+# Alternative: eigener Postgres-Container im Stack
+#
+# Nur noetig, wenn KEIN vorhandener Postgres genutzt werden soll. Zum Aktivieren
+# die Rautezeichen dieses Blocks entfernen, den api-Service auf das Netzwerk
+# "nexora" umstellen, oben depends_on wieder aktivieren und in der
+# Stack-Umgebung DB_HOST=db setzen. Zum Einspielen eines Dumps (*.sql/*.sh)
+# liegt der Init-Ordner unter ./db/init (wird beim ersten Start ausgefuehrt).
+# ---------------------------------------------------------------------------
+#  db:
+#    image: postgres:17-alpine
+#    container_name: nexora-db
+#    restart: unless-stopped
+#    environment:
+#      POSTGRES_USER: "${DB_USER:-trix0}"
+#      POSTGRES_PASSWORD: "${DB_PASSWORD:?DB_PASSWORD muss in der Stack-Umgebung gesetzt sein}"
+#      POSTGRES_DB: "${DB_NAME:-angebotstool}"
+#      TZ: "${TZ:-Europe/Berlin}"
+#    volumes:
+#      - nexora-db-data:/var/lib/postgresql/data
+#      # Portainer: relativer Pfad, wird im Portainer-Datenverzeichnis erwartet
+#      # (/data/compose/<stack-id>/db/init). Fuer einen eigenen Pfad absolut angeben.
+#      - ./db/init:/docker-entrypoint-initdb.d:ro
+#    ports:
+#      # Nur lokal erreichbar, z. B. fuer pgAdmin, und nur wenn der Host-Port
+#      # 5433 frei ist (DB_EXPOSED_PORT).
+#      - "127.0.0.1:${DB_EXPOSED_PORT:-5433}:5432"
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 10s
+#    networks:
+#      - nexora
+
+# volumes:
+#   nexora-db-data:
+
+networks:
+  # Netzwerk des vorhandenen Postgres-Containers.
+  dbnet:
+    external: true
+    name: postgresql_default
+
+  # Externes CRM-Netzwerk fuer weitere CRM-Dienste.
+  crmnet:
+    external: true
+    name: crm-network
+
+  # Wird nur fuer den auskommentierten eigenen db-Service gebraucht.
+  nexora:
+    driver: bridge
