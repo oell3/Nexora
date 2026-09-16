@@ -131,7 +131,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAngular");
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 
 
