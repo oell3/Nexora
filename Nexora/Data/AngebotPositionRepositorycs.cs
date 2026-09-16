@@ -93,8 +93,10 @@ namespace Nexora.Data
                 cmd.Parameters.AddWithValue("positionsart", position.Positionsart ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("mandant_id", mandant_id);
 
+                await cmd.ExecuteScalarAsync();
+
                 // RETURNING id -> ExecuteScalarAsync liefert das neue ID (long)
-                var insertedId = (int)(long)await cmd.ExecuteScalarAsync();
+                //var insertedId = (int)(long)await cmd.ExecuteScalarAsync();
                 // TODO: bei Bedarf: speichere/verwende insertedId
             }
             await conn.CloseAsync();
