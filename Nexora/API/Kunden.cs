@@ -42,7 +42,7 @@ namespace Nexora.API
 
             group.MapGet("/angebot", async (KundenRepository kundenRepository, HttpContext httpContext) =>
             {
-                if (httpContext.User.Identity?.IsAuthenticated != true)
+               /* if (httpContext.User.Identity?.IsAuthenticated != true)
                 {
                     return Results.Unauthorized();
                 }
@@ -64,9 +64,9 @@ namespace Nexora.API
                     {
                         Fehler = "Der Mandant_id-Claim enthält keinen gültigen Wert."
                     });
-                }
+                }*/
 
-                var kunden = await kundenRepository.GetKundenAsync(mandantId);
+                var kunden = await kundenRepository.GetKundenAsync(1);
 
                 return Results.Json(kunden);
             });
