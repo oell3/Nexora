@@ -6,8 +6,8 @@ namespace Nexora.Data
 {
     public class KundenRepository(Database db, Helpers helpers)
     {
-       
-        public async Task<List<Kunde>> GetKundenAsync( int mandant_id)
+
+        public async Task<List<Kunde>> GetKundenAsync(int mandant_id)
         {
             using var conn = db.CreateConnection();
             using var cmd = new NpgsqlCommand("SELECT * FROM crm.kunde WHERE mandant_id = @mandant_id", conn);
@@ -35,6 +35,32 @@ namespace Nexora.Data
                     Lon = helpers.GetNullableString(reader, "lon"),
 
                     Mandant_id = reader.GetInt32(reader.GetOrdinal("mandant_id"))
+                    // Map other properties as needed
+                };
+                kunden.Add(kunde);
+            }
+            return kunden;
+        }
+
+        public async Task<List<Kunde>> GetKundenAngebotAsync(int mandant_id)
+        {
+            using var conn = db.CreateConnection();
+            using var cmd = new NpgsqlCommand("SELECT * FROM crm.kunde WHERE mandant_id = @mandant_id", conn);
+            conn.Open();
+            cmd.Parameters.AddWithValue("@mandant_id", mandant_id);
+            using var reader = await cmd.ExecuteReaderAsync();
+            var kunden = new List<Kunde>();
+            while (await reader.ReadAsync())
+            {
+                var kunde = new Kunde()
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("id")),
+                    Name = helpers.GetNullableString(reader, "name"),
+                    Adresse = helpers.GetNullableString(reader, "adresse"),
+                    Plz = helpers.GetNullableString(reader, "plz"),
+                    Stadt = helpers.GetNullableString(reader, "stadt"),
+                    Mail = helpers.GetNullableString(reader, "mail"),
+                    Telefon = helpers.GetNullableString(reader, "telefon"),
                     // Map other properties as needed
                 };
                 kunden.Add(kunde);
