@@ -1,88 +1,71 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using Nexora.Models;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Principal;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace Nexora.API
+namespace Nexora.API;
+
+public sealed class Middleware(RequestDelegate next, IConfiguration configuration)
 {
-    // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
-    public class Middleware
+    private static readonly HashSet<string> PublicPaths = new(StringComparer.OrdinalIgnoreCase)
     {
-        private readonly RequestDelegate _next;
-        private readonly IConfiguration _config;
-        public Middleware(RequestDelegate next, IConfiguration config)
+        "/api/user",
+        "/api/user/",
+        "/api/user/login",
+        "/api/user/refresh"
+    };
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        if (HttpMethods.IsOptions(context.Request.Method) ||
+            PublicPaths.Contains(context.Request.Path.Value ?? string.Empty))
         {
-            _next = next;
-            _config = config;
+            await next(context);
+            return;
         }
 
-        public async Task Invoke(HttpContext httpContext)
+        var token = context.Request.Cookies["access_token"];
+        if (string.IsNullOrWhiteSpace(token))
         {
-            var path = httpContext.Request.Path.Value?.ToLower();
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("Authentication required");
+            return;
+        }
 
-            var publicPaths = new[]
+        var secret = configuration["Jwt:Secret"];
+        if (string.IsNullOrWhiteSpace(secret))
+        {
+            throw new InvalidOperationException("JWT secret not configured");
+        }
+
+        try
+        {
+            var principal = new JwtSecurityTokenHandler().ValidateToken(token, new TokenValidationParameters
             {
-        "/api/user/login",
-        "/api/user/refresh",
-        "/api/angebot/save",
-        "apoí/kunden/angebot"
-            };
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                ValidateIssuer = true,
+                ValidIssuer = configuration["Jwt:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = configuration["Jwt:Audience"],
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            }, out _);
 
-            if (publicPaths.Contains(path))
-            {
-                await _next(httpContext);
-                return;
-            }
-            
-            var token = httpContext.Request.Cookies["access_token"]; // Cookie-Name anpassen
-            Console.Write("token: " + token);
-            if (string.IsNullOrEmpty(token))
-            {
-                httpContext.Response.StatusCode = 401;
-                Console.WriteLine("Raw Cookie Header: " + httpContext.Request.Headers["Cookie"]);
-                await httpContext.Response.WriteAsync("Kein Token vorhanden");
-                return;
-            }
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_config["Jwt:Secret"]!); // Secret aus appsettings/Env
-
-            try
-            {
-                var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidIssuer = _config["Jwt:Issuer"],
-                    ValidateAudience = true,
-                    ValidAudience = _config["Jwt:Audience"],
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
-
-                httpContext.User = principal; // Claims (Sub, Role, mandant_id) verfügbar machen
-
-                await _next(httpContext);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Fehler: " + ex.Message);
-                httpContext.Response.StatusCode = 401;
-                await httpContext.Response.WriteAsync(ex.Message);
-            }
+            context.User = principal;
+            await next(context);
+        }
+        catch (SecurityTokenException)
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("Invalid or expired access token");
         }
     }
-    
+}
 
-    // Extension method used to add the middleware to the HTTP request pipeline.
-    public static class MiddlewareExtensions
+public static class MiddlewareExtensions
+{
+    public static IApplicationBuilder UseNexoraAuthentication(this IApplicationBuilder builder)
     {
-        public static IApplicationBuilder UseMiddleware(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<Middleware>();
-        }
+        return builder.UseMiddleware<Middleware>();
     }
 }

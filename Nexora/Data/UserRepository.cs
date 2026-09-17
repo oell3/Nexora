@@ -45,7 +45,11 @@ namespace Nexora.Data
             
             await conn.OpenAsync();
             
-            using var cmd = new Npgsql.NpgsqlCommand("SELECT u.id, u.mandant_id, u.rolle FROM crm.users u JOIN crm.refresh_tokens r ON u.id = r.user_id WHERE r.token_hash = @token_hash", conn);
+            using var cmd = new Npgsql.NpgsqlCommand(
+                "SELECT u.id, u.mandant_id, u.rolle FROM crm.users u " +
+                "JOIN crm.refresh_tokens r ON u.id = r.user_id " +
+                "WHERE r.token_hash = @token_hash AND r.revoked = false AND r.expires_at > NOW()",
+                conn);
             
             var token_hash = refreshCookie.HashToken(refreshtoken);
             
