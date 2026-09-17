@@ -1,0 +1,17 @@
+name: Portainer Auto Deploy
+
+on:
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Portainer webhook
+        env:
+          WEBHOOK_URL: ${{ secrets.PORTAINER_WEBHOOK_URL }}
+        run: |
+          if [ -z "$WEBHOOK_URL" ]; then echo "Missing PORTAINER_WEBHOOK_URL secret"; exit 1; fi
+          HTTP=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "$WEBHOOK_URL")
+          if [[ "$HTTP" =~ ^2 ]]; then echo "Portainer webhook OK ($HTTP)"; else echo "Portainer webhook failed ($HTTP)"; exit 1; fi
