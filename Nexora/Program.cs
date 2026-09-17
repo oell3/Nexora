@@ -144,6 +144,7 @@ api.MapUserEndpoint();
 api.MapProjekteEndpoint();
 api.MapAuthEndpoint();
 api.MapAngebotEndPoint();
+api.MapKundenEndPoint();
 // Endpoints
 
 
