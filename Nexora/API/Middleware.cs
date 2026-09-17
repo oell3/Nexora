@@ -26,7 +26,8 @@ namespace Nexora.API
             {
         "/api/user/login",
         "/api/user/refresh",
-        "/api/angebot/save"
+        "/api/angebot/save",
+        "apoí/kunden/angebot"
             };
 
             if (publicPaths.Contains(path))
