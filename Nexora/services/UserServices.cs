@@ -130,11 +130,14 @@ namespace Nexora.Services
 
         private static void AppendAuthenticationCookies(HttpContext httpContext, string refreshToken, string accessToken)
         {
+            var isSecure = httpContext.Request.IsHttps;
+            var sameSite = isSecure ? SameSiteMode.None : SameSiteMode.Lax; // browsers require Secure when SameSite=None
+
             httpContext.Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                Secure = isSecure,
+                SameSite = sameSite,
                 Path = "/",
                 Expires = DateTimeOffset.UtcNow.AddDays(30)
             });
@@ -142,8 +145,8 @@ namespace Nexora.Services
             httpContext.Response.Cookies.Append("access_token", accessToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                Secure = isSecure,
+                SameSite = sameSite,
                 Path = "/",
                 Expires = DateTimeOffset.UtcNow.AddMinutes(15)
             });
