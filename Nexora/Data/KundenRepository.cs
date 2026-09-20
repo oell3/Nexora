@@ -42,7 +42,7 @@ namespace Nexora.Data
             return kunden;
         }
 
-        public async Task<List<Kunde>> GetKundenAngebotAsync(int mandant_id)
+        public async Task<List<Kunde>> GetKundenByMandantAsync(int mandant_id)
         {
             using var conn = db.CreateConnection();
             using var cmd = new NpgsqlCommand("SELECT * FROM crm.kunde WHERE mandant_id = @mandant_id", conn);

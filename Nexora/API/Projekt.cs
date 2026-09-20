@@ -15,7 +15,7 @@ namespace Nexora.API
                 return await services.GetAllProjekte(1, 1);
             });
 
-            _group.MapGet("/{mandant_id:int}", async (int mandant_id, ProjekteServices services) =>
+            _group.MapGet("/angebot", async (int mandant_id, ProjekteServices services) =>
             {
                 
                 return await services.GetAllProjektbyMandant(mandant_id);

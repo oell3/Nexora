@@ -35,7 +35,7 @@ namespace Nexora.API
                         });
                     }*/
 
-                    var kunden = await kundenRepository.GetKundenAngebotAsync(1);
+                    var kunden = await kundenRepository.GetKundenByMandantAsync(1);
 
                     return Results.Json(kunden);
                 });
